@@ -5,6 +5,7 @@ import argparse
 from modules.config_handler import ConfigHandler
 from modules.aws_controller import AwsController
 from modules.azure_controller import AzureController
+from modules.gcp_controller import GcpController
 from modules import configuration
 
 # need to set this ENV var due to a OSX High Sierra forking bug
@@ -52,16 +53,24 @@ By: Splunk Threat Research Team [STRT] - research@splunk.com
 
     if config['general']['cloud_provider'] == 'aws':
         config.pop('azure')
+        config.pop('gcp')
         config.pop('local')
         controller = AwsController(config)
     elif config['general']['cloud_provider'] == 'azure':
         config.pop('aws')
+        config.pop('gcp')
         config.pop('local')
         controller = AzureController(config)
+    elif config['general']['cloud_provider'] == 'gcp':
+        config.pop('azure')
+        config.pop('aws')
+        config.pop('local')
+        controller = GcpController(config)
     elif config['general']['cloud_provider'] == 'local':
         from modules.vagrant_controller import VagrantController
         config.pop('azure')
         config.pop('aws')
+        config.pop('gcp')
         controller = VagrantController(config)
     
     return controller
